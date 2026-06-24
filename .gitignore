@@ -1,0 +1,15 @@
+# Fichiers sensibles personnalisés 
+*.secret
+*.env
+.envrc
+
+
+# =========================================
+# LOGS / DEBUG
+# =========================================
+
+# Fichiers de logs
+*.log
+
+# VSCode
+.vscode/
