@@ -17,6 +17,8 @@ COPY ${keypub_file} /home/${user}/.ssh/authorized_keys
 RUN chmod 600 /home/${user}/.ssh/authorized_keys \
 && chown -R ${user}:${user} /home/${user}/.ssh
 
+WORKDIR /tmp
+
 EXPOSE 22
 
 CMD [ "/usr/sbin/sshd", "-D" ]
