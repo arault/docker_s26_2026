@@ -32,6 +32,9 @@ services:
 
   phpsvc:
     image: ${PHP_MYSQL_IMAGE}:${PHP_IMAGE_TAG}
+    build:
+      context: ../03_dockerfile/
+      dockerfile: Dockerfile
     container_name: php
     volumes:
       - ./html:/var/www/html
