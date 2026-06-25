@@ -1,0 +1,20 @@
+---
+name: traefik
+services:
+  proxy:
+    image: traefik:3.7
+    container_name: proxy
+    ports:
+      - 80:80
+      - 8080:8080
+    volumes:
+      - /run/docker.sock:/run/docker.sock:ro
+      - ./traefik.yaml:/etc/traefik/traefik.yaml
+    networks:
+      proxynet:
+
+networks:
+  proxynet:
+    name: proxynet
+    driver_opts:
+      com.docker.network.bridge.name: proxynet0

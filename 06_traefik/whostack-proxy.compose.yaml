@@ -1,0 +1,34 @@
+---
+name: whostack-proxy
+services:
+  who-1:
+    image: traefik/whoami:v1.11
+    hostname: who-1
+    restart: unless-stopped
+    networks:
+      - whonet
+      - proxynet
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxynet
+      # Rediriger les requêtes envoyées à http://who-1.stage.local vers ce conteneur
+      - traefik.http.routers.who1.rule=Host(`who-1.stage.local`)
+
+  who-2:
+    image: traefik/whoami:v1.11
+    hostname: who-2
+    restart: unless-stopped
+    networks:
+      - whonet
+
+  who-3:
+    image: traefik/whoami:v1.11
+    hostname: who-3
+    restart: unless-stopped
+    networks:
+      - whonet
+
+networks:
+  whonet:
+  proxynet:
+    external: true
