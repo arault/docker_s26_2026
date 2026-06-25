@@ -20,6 +20,11 @@ services:
     depends_on:
       - phpsvc
       - dbsvc
+    logging:
+      driver: json-file
+      options:
+        max-size: ${LOG_MAX_SIZE}
+        max-file: ${LOG_MAX_FILE}
 
   phpsvc:
     image: ${PHP_MYSQL_IMAGE}:${PHP_IMAGE_TAG}
@@ -32,6 +37,11 @@ services:
     restart: unless-stopped
     depends_on:
       - dbsvc
+    logging:
+      driver: json-file
+      options:
+        max-size: ${LOG_MAX_SIZE}
+        max-file: ${LOG_MAX_FILE}
 
   dbsvc:
     image: mariadb:${MARIADB_IMAGE_TAG}
@@ -44,6 +54,11 @@ services:
       lempnet:
         ipv4_address: ${LEMPNET_PREFIX}.${MARIADB_IPV4}
     restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: ${LOG_MAX_SIZE}
+        max-file: ${LOG_MAX_FILE}
 
 volumes:
   datadb:
