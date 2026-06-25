@@ -1,5 +1,13 @@
 ---
 name: lemp-proxy-stack
+
+x-logging: &default-logging
+  logging:
+      driver: json-file
+      options:
+        max-size: ${LOG_MAX_SIZE}
+        max-file: ${LOG_MAX_FILE}
+
 services:
   wwwsvc:
     image: nginx:${NGINX_IMAGE_TAG}
@@ -20,11 +28,7 @@ services:
     depends_on:
       - phpsvc
       - dbsvc
-    logging:
-      driver: json-file
-      options:
-        max-size: ${LOG_MAX_SIZE}
-        max-file: ${LOG_MAX_FILE}
+    <<: *default-logging
 
   phpsvc:
     image: ${PHP_MYSQL_IMAGE}:${PHP_IMAGE_TAG}
@@ -37,11 +41,7 @@ services:
     restart: unless-stopped
     depends_on:
       - dbsvc
-    logging:
-      driver: json-file
-      options:
-        max-size: ${LOG_MAX_SIZE}
-        max-file: ${LOG_MAX_FILE}
+    <<: *default-logging
 
   dbsvc:
     image: mariadb:${MARIADB_IMAGE_TAG}
@@ -54,11 +54,7 @@ services:
       lempnet:
         ipv4_address: ${LEMPNET_PREFIX}.${MARIADB_IPV4}
     restart: unless-stopped
-    logging:
-      driver: json-file
-      options:
-        max-size: ${LOG_MAX_SIZE}
-        max-file: ${LOG_MAX_FILE}
+    <<: *default-logging
 
 volumes:
   datadb:
