@@ -1,0 +1,76 @@
+---
+x-nfs-params: &nfs-params
+  type: nfs
+  o: addr=192.168.56.200,vers=4
+
+x-nfs-replicas: &nb-replicas
+  deploy:
+    replicas: 2
+
+services:
+  wwwsvc:
+    image: nginx:1.31
+    ports:
+      - 80:80
+    volumes:
+      - html-nfs:/usr/share/nginx/html
+      - nginx-conf-nfs:/etc/nginx/conf.d
+    networks:
+      lempnet:
+    <<: *nb-replicas
+
+  # Attention :
+  # pour que le service wwwsvc fonctionne, il faut que
+  # le nom du service php et le nom de domaine indiqué 
+  # dans le fichier de configuration de Nginx (dans wwwsvc)
+  # correspondent.
+  php:
+    image: php:8.5-fpm
+    volumes:
+      - html-nfs:/var/www/html
+    networks:
+      lempnet:
+    <<: *nb-replicas
+
+  dbsvc:
+    image: mariadb:12.3
+    volumes:
+      - datadb-nfs:/var/lib/mysql
+    secrets:
+      - mdp_mariadb
+    environment:
+      - MARIADB_ROOT_PASSWORD=/run/secrets/mdp_mariadb
+    networks:
+      lempnet:
+    deploy:
+      replicas: 1
+
+secrets:
+  mdp_mariadb:
+    external: true
+    name: test
+
+volumes:
+  html-nfs:
+    driver_opts:
+      <<: *nfs-params
+      device: ":/html"
+  nginx-conf-nfs:
+    driver_opts:
+      <<: *nfs-params
+      device: ":/nginx-conf/"
+  datadb-nfs:
+    driver_opts:
+      <<: *nfs-params
+      device: ":/mariadb"
+
+networks:
+  lempnet:
+    # Directives ignorées par Docker Swarm
+    # ipam:
+    #   config:
+    #     - subnet: 172.40.0.0/16
+          # gateway: 172.40.255.254
+    # Ignoré par Docker Swarm
+    # driver_opts:
+    #   com.docker.network.bridge.name: lempnet0
