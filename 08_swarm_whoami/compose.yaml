@@ -1,0 +1,19 @@
+---
+# Non pris en charge dans Docker Swarm
+# name: who-swarm-stack
+
+services:
+  whoami:
+    image: traefik/whoami
+
+    # Directive ignorée par Swarm
+    container_name: who
+
+    ports:
+      - 80:80
+
+    # Directive ignorée par Swarm
+    restart: unless-stopped
+
+    deploy:
+      replicas: 2
